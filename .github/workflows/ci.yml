@@ -1,17 +1,6 @@
 name: Node.js CI
 
-on:
-  push:
-    branches:
-      - develop
-      - feature/**
-      - hotfix/**
-  pull_request:
-    branches:
-      - develop
-      - feature/**
-      - hotfix/**
-      - master
+on: [push, pull_request]
 
 jobs:
   build:
@@ -42,7 +31,7 @@ jobs:
         run: npm run build
         env:
           CI: true
-      
+
       - name: ESLint
         run: npm run lint
         env:
