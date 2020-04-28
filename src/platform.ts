@@ -2,7 +2,7 @@ import { APIEvent } from 'homebridge';
 import type { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { MiHomePlug } from './accessory/plug';
+import { ExampleAccessory } from './accessory/example';
 
 import axios from 'axios';
 
@@ -44,8 +44,8 @@ export class HomebridgeMiHomePlatform implements DynamicPlatformPlugin {
     this.log.info('Restoring accessory from cache:', accessory.displayName);
 
     // create the accessory handler
-    // this is imported from `plug.ts`
-    new MiHomePlug(this, accessory);
+    // this is imported from `example.ts`
+    new ExampleAccessory(this, accessory);
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
     this.accessories.push(accessory);
@@ -93,8 +93,8 @@ export class HomebridgeMiHomePlatform implements DynamicPlatformPlugin {
         accessory.context.device = device;
 
         // create the accessory handler
-        // this is imported from `plug.ts`
-        new MiHomePlug(this, accessory);
+        // this is imported from `example.ts`
+        new ExampleAccessory(this, accessory);
 
         // link the accessory to your platform
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
