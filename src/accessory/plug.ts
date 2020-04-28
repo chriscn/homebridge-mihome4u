@@ -11,27 +11,16 @@ export class MiHomePlug {
 	constructor(
 		private readonly platform: HomebridgeMiHomePlatform,
 		private readonly accessory: PlatformAccessory,
-		private readonly username: String,
-		private readonly api_key: String,
-		private readonly id: String,
+		private readonly username: string,
+		private readonly api_key: string,
+		private readonly id: string,
 	) {
-		let plugType: String;
-
-		axios.get({
-			method: 'get',
-			url: 'https://mihome4u.co.uk/api/v1/subdevices/show',
-			auth: {
-				username: this.username,
-				password: this.api_key
-			},
-			responseType: 'json'
-		}).then(res => {
-
-		})
-
 		this.accessory.getService(this.platform.Service.AccessoryInformation)!
 			.setCharacteristic(this.platform.Characteristic.Manufacturer, 'Energinie')
-			.setCharacteristic(this.platform.Characteristic.Model, )
+			.setCharacteristic(this.platform.Characteristic.Model, "Default")
+			.setCharacteristic(this.platform.Characteristic.SerialNumber, 'Default-Serial');
 
+
+		this.service = this.accessory.getService(this.platform.Service.Switch) ?? this.accessory.addService(this.platform.Service.Lightbulb);
 	}
 }
