@@ -32,8 +32,3 @@ jobs:
         env:
           CI: true
 
-      - name: ESLint
-        run: npm run lint
-        env:
-          CI: true
-
