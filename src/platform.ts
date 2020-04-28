@@ -4,7 +4,7 @@ import type { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformCon
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { ExampleAccessory } from './accessory/example';
 
-import { MiHomePlug } from "./accessory/plug";
+import { MiHomePlug } from './accessory/plug';
 
 import axios from 'axios';
 
