@@ -4,7 +4,7 @@ A fast up to date homebridge plugin to interface properly with [MiHome](https://
 ```json
 {
   "platform": "MiHome",
-  "username:" "youremail@address.co.uk",
+  "username:": "youremail@address.co.uk",
   "password": "yourpassword or APIKey",
   "baseURL": "alternative base URL"
 }
