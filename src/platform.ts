@@ -40,10 +40,13 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 	  // Dynamic Platform plugins should only register new accessories after this event was fired,
 	  // in order to ensure they weren't added to homebridge already. This event can also be used
 	  // to start discovery of new accessories.
-	  this.api.on(APIEvent.DID_FINISH_LAUNCHING, () => {
+	  this.api.on(APIEvent.DID_FINISH_LAUNCHING, async () => {
 		  log.debug('Executed didFinishLaunching callback');
 		  // run the method to discover / register your devices as accessories
-		  this.authentication();
+
+		  await this.authentication(); // get apiKey from MiHome to use instead of password.
+
+		  this.discoverDevices();
 	  });
 
   }
@@ -72,8 +75,6 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 	  }).catch(error => {
 		  this.log.error(error);
 	  });
-
-	  this.discoverDevices();
   }
 
   /**
@@ -81,14 +82,14 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
    * It should be used to setup event handlers for characteristics and update respective values.
    */
   configureAccessory(accessory: PlatformAccessory) {
-    this.log.info('Restoring accessory from cache:', accessory.displayName);
+   // this.log.info('Restoring accessory from cache:', accessory.displayName);
 
     // create the accessory handler
     // this is imported from `example.ts`
-    new ExampleAccessory(this, accessory);
+    //new ExampleAccessory(this, accessory);
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
-    this.accessories.push(accessory);
+   // this.accessories.push(accessory);
   }
 
   /**
@@ -97,8 +98,6 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
    * must not be registered again to prevent "duplicate UUID" errors.
    */
   discoverDevices() {
-  	this.log.debug("API KEY " + this.apiKey);
-
 	axios(this.baseURL + '/api/v1/subdevices/list', {
 		method: "GET",
 		auth: {
@@ -107,12 +106,16 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 		},
 		responseType: "json"
 	}).then(response => {
-		this.log.info(`error from discoverdevices`)
-		this.log.debug(response.data);
+		this.log.debug('Got response from subdevices list');
+		let data = response.data.data;
+
+		for (let i: number = 0; i < data.length; i++) {
+			let friendlyName: string = data[i].label.match(/(?:\d{3}-\d{2} )?([\w \-]+)/)[1] || data[i].label
+
+			this.log.debug(`ID: ${data[i].id} with name ${friendlyName} with type ${data[i].device_type}`);
+		}
 	}).catch(error => {
 		this.log.error(error);
 	})
-
-
   }
 }
