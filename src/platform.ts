@@ -20,12 +20,44 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
 
+  public username: string;
+  public base_url: string; // should usually be https://mihome4u.co.uk
+  public api_key: string | undefined;
+
   constructor(
     public readonly log: Logger,
     public readonly config: PlatformConfig,
     public readonly api: API,
   ) {
-    this.log.debug('Finished initializing platform:', this.config.name);
+    this.log.debug('Finished initializing platform:', this.config.platform);
+    this.log.debug(`Found config with username ${this.config.username} and password ${this.config.password}`);
+
+    this.username = this.config.username;
+    this.base_url = this.config.baseURL || "https://mihome4u.co.uk";
+
+    axios(this.base_url + '/api/v1/users/profile', {
+    	method: "GET",
+	    auth: {
+    		username: this.username,
+		    password: this.config.password
+	    },
+	    responseType: "json"
+    }).then(response => {
+    	if (response.data.status == "success") {
+		    if (response.data.data.api_key == undefined || response.data.data.api_key == "") {
+			    this.log.error(`APIKey was undefined or empty, may be a weird bug. Please report this.`)
+			    this.log.error(`Error Message: ${response.data.data.message}`);
+		    } else {
+			    this.api_key = response.data.data.api_key.toString();
+			    this.log.info(`Successfully authenticated with username (${this.username}) and got APIKEY (${this.api_key})`)
+		    }
+	    } else {
+			this.log.error(`Non Success status code, expected sucess got '${response.data.status}'`);
+	        // should disable the plugin
+    	}
+    }).catch(error => {
+    	this.log.error(error);
+    });
 
     // When this event is fired it means Homebridge has restored all cached accessories from disk.
     // Dynamic Platform plugins should only register new accessories after this event was fired,
@@ -60,54 +92,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
    */
   discoverDevices() {
 
-    // EXAMPLE ONLY
-    // A real plugin you would discover accessories from the local network, cloud services
-    // or a user-defined array in the platform config.
-    const exampleDevices = [
-      {
-        exampleUniqueId: 'ABCD',
-        exampleDisplayName: 'Bedroom',
-      },
-      {
-        exampleUniqueId: 'EFGH',
-        exampleDisplayName: 'Kitchen',
-      },
-    ];
 
-    // loop over the discovered devices and register each one if it has not already been registered
-    for (const device of exampleDevices) {
-
-      // generate a unique id for the accessory this should be generated from
-      // something globally unique, but constant, for example, the device serial
-      // number or MAC address
-      const uuid = this.api.hap.uuid.generate(device.exampleUniqueId);
-
-      // check that the device has not already been registered by checking the
-      // cached devices we stored in the `configureAccessory` method above
-      if (!this.accessories.find(accessory => accessory.UUID === uuid)) {
-        this.log.info('Registering new accessory:', device.exampleDisplayName);
-
-        // create a new accessory
-        const accessory = new this.api.platformAccessory(device.exampleDisplayName, uuid);
-
-        // store a copy of the device object in the `accessory.context`
-        // the `context` property can be used to store any data about the accessory you may need
-        accessory.context.device = device;
-
-        // create the accessory handler
-        // this is imported from `example.ts`
-        new ExampleAccessory(this, accessory);
-
-        // link the accessory to your platform
-        this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
-
-        // push into accessory cache
-        this.accessories.push(accessory);
-
-        // it is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:
-        // this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
-      }
-    }
 
   }
 }
