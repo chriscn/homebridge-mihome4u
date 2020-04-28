@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "Homebridge MiHome4U",
   "pluginType": "platform",
   "singular": true,
   "schema": {

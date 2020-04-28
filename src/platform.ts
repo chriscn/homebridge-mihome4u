@@ -2,14 +2,16 @@ import { APIEvent } from 'homebridge';
 import type { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { ExamplePlatformAccessory } from './platformAccessory';
+import { MiHomePlug } from './accessory/plug';
+
+import axios from 'axios';
 
 /**
  * HomebridgePlatform
  * This class is the main constructor for your plugin, this is where you should
  * parse the user config and discover/register accessories with Homebridge.
  */
-export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
+export class HomebridgeMiHomePlatform implements DynamicPlatformPlugin {
   public readonly Service = this.api.hap.Service;
   public readonly Characteristic = this.api.hap.Characteristic;
 
@@ -42,8 +44,8 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
     this.log.info('Restoring accessory from cache:', accessory.displayName);
 
     // create the accessory handler
-    // this is imported from `platformAccessory.ts`
-    new ExamplePlatformAccessory(this, accessory);
+    // this is imported from `plug.ts`
+    new MiHomePlug(this, accessory);
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
     this.accessories.push(accessory);
@@ -91,8 +93,8 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
         accessory.context.device = device;
 
         // create the accessory handler
-        // this is imported from `platformAccessory.ts`
-        new ExamplePlatformAccessory(this, accessory);
+        // this is imported from `plug.ts`
+        new MiHomePlug(this, accessory);
 
         // link the accessory to your platform
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
