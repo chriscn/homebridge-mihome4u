@@ -49,7 +49,29 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
   }
 
   async authentication() {
-	  await this.getAPIKey();
+	  await axios(this.baseURL + '/api/v1/users/profile', {
+		  method: "GET",
+		  auth: {
+			  username: this.username,
+			  password: this.config.password
+		  },
+		  responseType: "json"
+	  }).then(response => {
+		  if (response.data.status == "success") {
+			  if (response.data.data.api_key == undefined || response.data.data.api_key == "") {
+				  this.log.error(`APIKey was undefined or empty, may be a weird bug. Please report this.`)
+				  this.log.error(`Error Message: ${response.data.data.message}`);
+			  } else {
+				  this.apiKey = response.data.data.api_key.toString();
+				  this.log.info(`Successfully authenticated with username (${this.username}) and got APIKEY (${this.apiKey})`)
+			  }
+		  } else {
+			  this.log.error(`Non Success status code, expected sucess got '${response.data.status}'`);
+			  // should disable the plugin
+		  }
+	  }).catch(error => {
+		  this.log.error(error);
+	  });
 
 	  this.discoverDevices();
   }
@@ -95,28 +117,6 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
   }
 
   async getAPIKey() {
-	  axios(this.baseURL + '/api/v1/users/profile', {
-		  method: "GET",
-		  auth: {
-			  username: this.username,
-			  password: this.config.password
-		  },
-		  responseType: "json"
-	  }).then(response => {
-		  if (response.data.status == "success") {
-			  if (response.data.data.api_key == undefined || response.data.data.api_key == "") {
-				  this.log.error(`APIKey was undefined or empty, may be a weird bug. Please report this.`)
-				  this.log.error(`Error Message: ${response.data.data.message}`);
-			  } else {
-				  this.apiKey = response.data.data.api_key.toString();
-				  this.log.info(`Successfully authenticated with username (${this.username}) and got APIKEY (${this.apiKey})`)
-			  }
-		  } else {
-			  this.log.error(`Non Success status code, expected sucess got '${response.data.status}'`);
-			  // should disable the plugin
-		  }
-	  }).catch(error => {
-		  this.log.error(error);
-	  });
+
   }
 }
