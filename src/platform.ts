@@ -21,8 +21,8 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
   public readonly accessories: PlatformAccessory[] = [];
 
   public username: string;
-  public base_url: string; // should usually be https://mihome4u.co.uk
-  public api_key: string | undefined;
+  public baseURL: string; // should usually be https://mihome4u.co.uk
+  public apiKey: string | undefined;
 
   constructor(
     public readonly log: Logger,
@@ -33,9 +33,9 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
     this.log.debug(`Found config with username ${this.config.username} and password ${this.config.password}`);
 
     this.username = this.config.username;
-    this.base_url = this.config.baseURL || "https://mihome4u.co.uk";
+    this.baseURL = this.config.baseURL || "https://mihome4u.co.uk";
 
-    axios(this.base_url + '/api/v1/users/profile', {
+    axios(this.baseURL + '/api/v1/users/profile', {
     	method: "GET",
 	    auth: {
     		username: this.username,
@@ -48,8 +48,8 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 			    this.log.error(`APIKey was undefined or empty, may be a weird bug. Please report this.`)
 			    this.log.error(`Error Message: ${response.data.data.message}`);
 		    } else {
-			    this.api_key = response.data.data.api_key.toString();
-			    this.log.info(`Successfully authenticated with username (${this.username}) and got APIKEY (${this.api_key})`)
+			    this.apiKey = response.data.data.api_key.toString();
+			    this.log.info(`Successfully authenticated with username (${this.username}) and got APIKEY (${this.apiKey})`)
 		    }
 	    } else {
 			this.log.error(`Non Success status code, expected sucess got '${response.data.status}'`);
@@ -95,4 +95,6 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 
 
   }
+
+
 }
