@@ -48,7 +48,6 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 
 		  this.discoverDevices();
 	  });
-
   }
 
   async authentication() {
@@ -109,13 +108,26 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 		this.log.debug('Got response from subdevices list');
 		let data = response.data.data;
 
-		for (let i: number = 0; i < data.length; i++) {
-			let friendlyName: string = data[i].label.match(/(?:\d{3}-\d{2} )?([\w \-]+)/)[1] || data[i].label
+		if (response.data.status === "success") {
+			for (let i: number = 0; i < data.length; i++) {
+				let friendlyName: string = data[i].label.match(/(?:\d{3}-\d{2} )?([\w \-]+)/)[1] || data[i].label
 
-			this.log.debug(`ID: ${data[i].id} with name ${friendlyName} with type ${data[i].device_type}`);
+
+				this.log.debug(`ID: ${data[i].id} with name ${friendlyName} with type ${data[i].device_type}`);
+			}
+		} else {
+			this.log.error(`Non success response type got response: ${response.data.status}`);
 		}
 	}).catch(error => {
 		this.log.error(error);
 	})
   }
+}
+
+export interface MiHomeDevice {
+	id: number,
+	label: string,
+	friendly_name: string,
+	device_id: number,
+	device_type: string
 }
