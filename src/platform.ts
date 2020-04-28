@@ -22,52 +22,36 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 
   public username: string;
   public baseURL: string; // should usually be https://mihome4u.co.uk
-  public apiKey: string | undefined;
+  public apiKey: string = "";
 
   constructor(
-    public readonly log: Logger,
-    public readonly config: PlatformConfig,
-    public readonly api: API,
+	  public readonly log: Logger,
+	  public readonly config: PlatformConfig,
+	  public readonly api: API,
   ) {
-    this.log.debug('Finished initializing platform:', this.config.platform);
-    this.log.debug(`Found config with username ${this.config.username} and password ${this.config.password}`);
+	  this.log.debug('Finished initializing platform:', this.config.platform);
+	  this.log.debug(`Found config with username ${this.config.username} and password ${this.config.password}`);
 
-    this.username = this.config.username;
-    this.baseURL = this.config.baseURL || "https://mihome4u.co.uk";
+	  this.username = this.config.username;
+	  this.baseURL = this.config.baseURL || "https://mihome4u.co.uk";
 
-    axios(this.baseURL + '/api/v1/users/profile', {
-    	method: "GET",
-	    auth: {
-    		username: this.username,
-		    password: this.config.password
-	    },
-	    responseType: "json"
-    }).then(response => {
-    	if (response.data.status == "success") {
-		    if (response.data.data.api_key == undefined || response.data.data.api_key == "") {
-			    this.log.error(`APIKey was undefined or empty, may be a weird bug. Please report this.`)
-			    this.log.error(`Error Message: ${response.data.data.message}`);
-		    } else {
-			    this.apiKey = response.data.data.api_key.toString();
-			    this.log.info(`Successfully authenticated with username (${this.username}) and got APIKEY (${this.apiKey})`)
-		    }
-	    } else {
-			this.log.error(`Non Success status code, expected sucess got '${response.data.status}'`);
-	        // should disable the plugin
-    	}
-    }).catch(error => {
-    	this.log.error(error);
-    });
 
-    // When this event is fired it means Homebridge has restored all cached accessories from disk.
-    // Dynamic Platform plugins should only register new accessories after this event was fired,
-    // in order to ensure they weren't added to homebridge already. This event can also be used
-    // to start discovery of new accessories.
-    this.api.on(APIEvent.DID_FINISH_LAUNCHING, () => {
-      log.debug('Executed didFinishLaunching callback');
-      // run the method to discover / register your devices as accessories
-      this.discoverDevices();
-    });
+	  // When this event is fired it means Homebridge has restored all cached accessories from disk.
+	  // Dynamic Platform plugins should only register new accessories after this event was fired,
+	  // in order to ensure they weren't added to homebridge already. This event can also be used
+	  // to start discovery of new accessories.
+	  this.api.on(APIEvent.DID_FINISH_LAUNCHING, () => {
+		  log.debug('Executed didFinishLaunching callback');
+		  // run the method to discover / register your devices as accessories
+		  this.authentication();
+	  });
+
+  }
+
+  async authentication() {
+	  await this.getAPIKey();
+
+	  this.discoverDevices();
   }
 
   /**
@@ -91,10 +75,48 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
    * must not be registered again to prevent "duplicate UUID" errors.
    */
   discoverDevices() {
+  	this.log.debug("API KEY " + this.apiKey);
 
+	axios(this.baseURL + '/api/v1/subdevices/list', {
+		method: "GET",
+		auth: {
+			username: this.username,
+			password: this.apiKey
+		},
+		responseType: "json"
+	}).then(response => {
+		this.log.info(`error from discoverdevices`)
+		this.log.debug(response.data);
+	}).catch(error => {
+		this.log.error(error);
+	})
 
 
   }
 
-
+  async getAPIKey() {
+	  axios(this.baseURL + '/api/v1/users/profile', {
+		  method: "GET",
+		  auth: {
+			  username: this.username,
+			  password: this.config.password
+		  },
+		  responseType: "json"
+	  }).then(response => {
+		  if (response.data.status == "success") {
+			  if (response.data.data.api_key == undefined || response.data.data.api_key == "") {
+				  this.log.error(`APIKey was undefined or empty, may be a weird bug. Please report this.`)
+				  this.log.error(`Error Message: ${response.data.data.message}`);
+			  } else {
+				  this.apiKey = response.data.data.api_key.toString();
+				  this.log.info(`Successfully authenticated with username (${this.username}) and got APIKEY (${this.apiKey})`)
+			  }
+		  } else {
+			  this.log.error(`Non Success status code, expected sucess got '${response.data.status}'`);
+			  // should disable the plugin
+		  }
+	  }).catch(error => {
+		  this.log.error(error);
+	  });
+  }
 }
