@@ -2,7 +2,6 @@ import { APIEvent } from 'homebridge';
 import type { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { ExampleAccessory } from './accessory/example';
 
 import { MiHomePlug } from './accessory/plug';
 
@@ -41,7 +40,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 	  // in order to ensure they weren't added to homebridge already. This event can also be used
 	  // to start discovery of new accessories.
 	  this.api.on(APIEvent.DID_FINISH_LAUNCHING, async () => {
-		  log.debug('Executed didFinishLaunching callback');
+		  this.log.debug('Executed didFinishLaunching callback');
 		  // run the method to discover / register your devices as accessories
 
 		  await this.authentication(); // get apiKey from MiHome to use instead of password.
@@ -81,14 +80,17 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
    * It should be used to setup event handlers for characteristics and update respective values.
    */
   configureAccessory(accessory: PlatformAccessory) {
-   // this.log.info('Restoring accessory from cache:', accessory.displayName);
+  	console.log(accessory.UUID);
+
+    this.log.info('Restoring accessory from cache:', accessory.displayName);
+
 
     // create the accessory handler
     // this is imported from `example.ts`
-    //new ExampleAccessory(this, accessory);
+    new MiHomePlug(this, accessory);
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
-   // this.accessories.push(accessory);
+    this.accessories.push(accessory);
   }
 
   /**
@@ -105,15 +107,30 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 		},
 		responseType: "json"
 	}).then(response => {
-		this.log.debug('Got response from subdevices list');
+		this.log.debug('Adding subdevices');
 		let data = response.data.data;
 
 		if (response.data.status === "success") {
-			for (let i: number = 0; i < data.length; i++) {
-				let friendlyName: string = data[i].label.match(/(?:\d{3}-\d{2} )?([\w \-]+)/)[1] || data[i].label
+			for (const device of data) {
+				const uuid = this.api.hap.uuid.generate(device.id.toString())
+				const friendlyName: string = device.label.match(/(?:\d{3}-\d{2} )?([\w \-]+)/)[1] || device.label
 
-				this.log.debug(this.api.hap.uuid.generate(data[i].id.toString()));
-				this.log.debug(`ID: ${data[i].id} with name ${friendlyName} with type ${data[i].device_type}`);
+				if (!this.accessories.find(accessory => accessory.UUID === uuid)) {
+					this.log.info(`Registering new accessory with name ${friendlyName} with id ${device.id}`);
+
+					const accessory = new this.api.platformAccessory(friendlyName, uuid);
+
+					accessory.context.device = device;
+
+					switch (device.device_type.toString()) {
+						case "control":
+							new MiHomePlug(this, accessory);
+					}
+
+					this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+
+					this.accessories.push(accessory);
+				}
 			}
 		} else {
 			this.log.error(`Non success response type got response: ${response.data.status}`);
