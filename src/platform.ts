@@ -115,8 +115,4 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 
 
   }
-
-  async getAPIKey() {
-
-  }
 }
