@@ -1,7 +1,7 @@
 import { CharacteristicEventTypes } from 'homebridge';
 import type { Service, PlatformAccessory, CharacteristicValue, CharacteristicSetCallback, CharacteristicGetCallback} from 'homebridge';
 
-import { HomebridgeMiHomePlatform } from '../platform';
+import { MiHomePlatform } from '../platform';
 
 /**
  * Platform Accessory
@@ -21,7 +21,7 @@ export class ExampleAccessory {
   }
 
   constructor(
-    private readonly platform: HomebridgeMiHomePlatform,
+    private readonly platform: MiHomePlatform,
     private readonly accessory: PlatformAccessory,
   ) {
 

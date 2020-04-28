@@ -1,11 +1,11 @@
 import type { API } from 'homebridge';
 
 import { PLATFORM_NAME } from './settings';
-import { HomebridgeMiHomePlatform } from './platform';
+import { MiHomePlatform } from './platform';
 
 /**
  * This method registers the platform with Homebridge
  */
 export = (api: API) => {
-  api.registerPlatform(PLATFORM_NAME, HomebridgeMiHomePlatform);
+  api.registerPlatform(PLATFORM_NAME, MiHomePlatform);
 }

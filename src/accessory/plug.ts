@@ -3,13 +3,13 @@ import type { Service, PlatformAccessory, CharacteristicValue, CharacteristicSet
 
 import axios from 'axios';
 
-import { HomebridgeMiHomePlatform } from '../platform';
+import { MiHomePlatform } from '../platform';
 
 export class MiHomePlug {
 	private service: Service;
 
 	constructor(
-		private readonly platform: HomebridgeMiHomePlatform,
+		private readonly platform: MiHomePlatform,
 		private readonly accessory: PlatformAccessory,
 		private readonly username: string,
 		private readonly api_key: string,
