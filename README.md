@@ -9,6 +9,10 @@ A fast up to date homebridge plugin to interface properly with [MiHome](https://
   "baseURL": "alternative base URL"
 }
 ```
+- `platform`: this should be left default to MiHome
+- `username`: your email address
+- `password`: either supply your password or API_Key
+- `baseURL`: incase the API gets updated
 
 ###### Scripts
 Below are scripts just so that I don't forget them.
