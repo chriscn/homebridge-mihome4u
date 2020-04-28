@@ -112,7 +112,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 			for (let i: number = 0; i < data.length; i++) {
 				let friendlyName: string = data[i].label.match(/(?:\d{3}-\d{2} )?([\w \-]+)/)[1] || data[i].label
 
-
+				this.log.debug(this.api.hap.uuid.generate(data[i].id.toString()));
 				this.log.debug(`ID: ${data[i].id} with name ${friendlyName} with type ${data[i].device_type}`);
 			}
 		} else {
@@ -122,12 +122,4 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 		this.log.error(error);
 	})
   }
-}
-
-export interface MiHomeDevice {
-	id: number,
-	label: string,
-	friendly_name: string,
-	device_id: number,
-	device_type: string
 }
