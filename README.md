@@ -1,5 +1,14 @@
 # homebridge-mihome4u
 A fast up to date homebridge plugin to interface properly with [MiHome](https://mihome4u.co.uk) using the API.
+## Config
+```json
+{
+  "platform": "MiHome",
+  "username:" "youremail@address.co.uk",
+  "password": "yourpassword or APIKey",
+  "baseURL": "alternative base URL"
+}
+```
 
 ###### Scripts
 Below are scripts just so that I don't forget them.
