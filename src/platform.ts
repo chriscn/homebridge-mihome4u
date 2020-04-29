@@ -142,6 +142,8 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 	    .split(' ')
 	    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
 	    .join(' ')
+	    .replace('Lhs', 'LHS') // LHS should be in all capitals standing for Left hand side
+	    .replace('Rhs', 'RHS')
 	    .trim();
   }
 }
