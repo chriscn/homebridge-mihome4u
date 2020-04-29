@@ -65,11 +65,14 @@ export class MiHomePlug {
   getOn(callback: CharacteristicGetCallback) {
     this.platform.log.debug(`getting on for ${this.accessory.displayName} with id ${this.accessory.context.device.id}`);
 
-    axios(this.platform.baseURL + `/api/v1/subdevices/list`, {
+    axios(this.platform.baseURL + `/api/v1/subdevices/show`, {
       method: 'GET',
       auth: {
         username: this.platform.username,
         password: this.platform.apiKey,
+      },
+      params: {
+        id: parseInt(this.accessory.context.device.id),
       },
       responseType: 'json',
     }).then(response => {
