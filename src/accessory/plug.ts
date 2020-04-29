@@ -32,7 +32,8 @@ export class MiHomePlug {
     // each service must implement at-mimimum the "required characteristics" for the given service type
     // see https://github.com/homebridge/HAP-NodeJS/blob/master/src/lib/gen/HomeKit.ts
 
-    // register handlers for the On/Off Characteristic
+    // register handlers for the On/Off Characteristis
+
     this.service.getCharacteristic(this.platform.Characteristic.On)
       .on(CharacteristicEventTypes.SET, this.setOn.bind(this))                // SET - bind to the `setOn` method below
       .on(CharacteristicEventTypes.GET, this.getOn.bind(this));               // GET - bind to the `getOn` method below
