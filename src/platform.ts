@@ -92,11 +92,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
       this.log.info(`Unknown device found in cache with type ${accessory.context.device.device}`);
     }
   }
-
-  removeAccessory(accessory: PlatformAccessory) {
-
-  }
-
+  
   // calls the api to get a list of all the subdevices
   discoverDevices() {
     axios(this.baseURL + '/api/v1/subdevices/list', {
