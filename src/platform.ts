@@ -80,8 +80,6 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
    * It should be used to setup event handlers for characteristics and update respective values.
    */
   configureAccessory(accessory: PlatformAccessory) {
-    console.log(accessory.UUID);
-
     this.log.info('Restoring accessory from cache:', accessory.displayName);
 
 
@@ -110,7 +108,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
         for (const device of data) {
           const uuid = this.api.hap.uuid.generate(device.id.toString());
           const friendlyName: string = this.toTitleCase(
-            device.label.match(/(?:\d{3}-\d{2} )?([\w -]+)/)[1] || device.label
+            device.label.match(/(?:\d{3}-\d{2} )?([\w -]+)/)[1] || device.label,
           ); // cleans up the name to be more homekit elagant
 
           if (!this.accessories.find(accessory => accessory.UUID === uuid)) {
@@ -127,7 +125,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
                 break;
               default:
                 this.log.info(`Unknown device type of ${device.device_type}, not adding.` +
-                `Please report this is that in future we can add it!`);
+                'Please report this is that in future we can add it!');
             }
 
           }
