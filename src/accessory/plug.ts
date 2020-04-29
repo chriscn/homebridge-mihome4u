@@ -64,32 +64,27 @@ export class MiHomePlug {
   getOn(callback: CharacteristicGetCallback) {
     this.platform.log.debug(`getting on for ${this.accessory.displayName} with id ${this.accessory.context.device.id}`);
 
-    axios(this.platform.baseURL + `/api/v1/subdevices/show`, {
+    axios({
       method: 'POST',
+      url: this.platform.baseURL + `/api/v1/subdevices/show`,
+      data: {
+        "id": parseInt(this.accessory.context.device.id)
+      },
       auth: {
         username: this.platform.username,
         password: this.platform.apiKey,
-      },
-      params: {
-        id: parseInt(this.accessory.context.device.id),
       },
       responseType: 'json',
     }).then(response => {
       this.platform.log.debug(`Got response status ${response.data.status} from id ${this.accessory.context.device.id}`);
       this.platform.log.debug(response.data.data);
+      const isOn = false;
+
+      callback(null, isOn);
     }).catch(error => {
       this.platform.log.error(`Got an error ${error.response.status} from ${this.accessory.context.device.label} with id ${this.accessory.context.device.id}`);
+      this.platform.log.error(`Error body ${error.response.data}`);
+      callback(error);
     });
-
-    // implement your own code to check if the device is on
-    // this.exampleStates.On = !this.exampleStates.On;
-    // const isOn = this.exampleStates.On;
-
-    //this.platform.log.debug('Get Characteristic On ->', isOn);
-
-    // you must call the callback function
-    // the first argument should be null if there were no errors
-    // the second argument should be the value to return
-    callback(null, false);
   }
 }
