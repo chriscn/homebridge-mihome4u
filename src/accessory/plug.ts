@@ -62,28 +62,36 @@ export class MiHomePlug {
    * this.service.updateCharacteristic(this.platform.Characteristic.On, true)
    */
   getOn(callback: CharacteristicGetCallback) {
+    let id = this.accessory.context.device.id;
+
     this.platform.log.debug(`getting on for ${this.accessory.displayName} with id ${this.accessory.context.device.id}`);
+    this.platform.log.debug(`user: ${this.platform.username} pass : ${this.platform.apiKey}`);
 
     axios({
-      method: 'POST',
-      url: this.platform.baseURL + `/api/v1/subdevices/show`,
-      data: {
-        "id": parseInt(this.accessory.context.device.id)
+      method: 'post',
+      url: this.platform.baseURL + '/api/v1/subdevices/show',
+      headers: {
+        "Content-type": "application/json"
       },
+      data: { id: parseInt(id) },
       auth: {
         username: this.platform.username,
         password: this.platform.apiKey,
       },
-      responseType: 'json',
     }).then(response => {
       this.platform.log.debug(`Got response status ${response.data.status} from id ${this.accessory.context.device.id}`);
-      this.platform.log.debug(response.data.data);
-      const isOn = false;
-
-      callback(null, isOn);
+    //  this.platform.log.debug(response.data);
+      if (response.data.data.power_state == 1) {
+        callback(null, true);
+      } else if (response.data.data.power_state == 0) {
+        callback(null, false);
+      } else {
+        this.platform.log.info('Non boolean power_state?')
+        callback(new Error("non boolean power_state"));
+      }
     }).catch(error => {
       this.platform.log.error(`Got an error ${error.response.status} from ${this.accessory.context.device.label} with id ${this.accessory.context.device.id}`);
-      this.platform.log.error(`Error body ${error.response.data}`);
+//      this.platform.log.error(`Error body ${error.response.data}`);
       callback(error);
     });
   }
