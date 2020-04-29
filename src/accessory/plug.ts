@@ -3,13 +3,10 @@ import {CharacteristicEventTypes} from 'homebridge';
 
 import {MiHomePlatform} from '../platform';
 
+import axios from 'axios';
+
 export class MiHomePlug {
   private service: Service;
-
-  private exampleStates = {
-    On: false,
-    Brightness: 100,
-  };
 
   constructor(
     private readonly platform: MiHomePlatform,
@@ -19,7 +16,7 @@ export class MiHomePlug {
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Energinie')
       .setCharacteristic(this.platform.Characteristic.Model, 'Default')
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, 'Default-Serial');
+      .setCharacteristic(this.platform.Characteristic.SerialNumber, this.accessory.context.device.label);
     // get the LightBulb service if it exists, otherwise create a new LightBulb service
     // you can create multiple services for each accessory
     this.service = this.accessory.getService(this.platform.Service.Switch) ?? this.accessory.addService(this.platform.Service.Switch);
@@ -47,13 +44,8 @@ export class MiHomePlug {
    * These are sent when the user changes the state of an accessory, for example, turning on a Light bulb.
    */
   setOn(value: CharacteristicValue, callback: CharacteristicSetCallback) {
+    // post request to the api
 
-    // implement your own code to turn your device on/off
-    this.exampleStates.On = value as boolean;
-
-    this.platform.log.debug('Set Characteristic On ->', value);
-
-    // you must call the callback function
     callback(null);
   }
 
@@ -71,16 +63,30 @@ export class MiHomePlug {
    * this.service.updateCharacteristic(this.platform.Characteristic.On, true)
    */
   getOn(callback: CharacteristicGetCallback) {
+    this.platform.log.debug(`getting on for ${this.accessory.displayName} with id ${this.accessory.context.device.id}`);
+
+    axios(this.platform.baseURL + `/api/v1/subdevices/list`, {
+      method: 'GET',
+      auth: {
+        username: this.platform.username,
+        password: this.platform.apiKey,
+      },
+      responseType: 'json',
+    }).then(response => {
+      this.platform.log.info(`Got response status ${response.data.status}`);
+    }).catch(error => {
+      this.platform.log.error(`Got an error ${error.response.status} from ${this.accessory.context.device.label} with id ${this.accessory.context.device.id}`);
+    });
 
     // implement your own code to check if the device is on
-    this.exampleStates.On = !this.exampleStates.On;
-    const isOn = this.exampleStates.On;
+    // this.exampleStates.On = !this.exampleStates.On;
+    // const isOn = this.exampleStates.On;
 
-    this.platform.log.debug('Get Characteristic On ->', isOn);
+    //this.platform.log.debug('Get Characteristic On ->', isOn);
 
     // you must call the callback function
     // the first argument should be null if there were no errors
     // the second argument should be the value to return
-    callback(null, isOn);
+    callback(null, true);
   }
 }
