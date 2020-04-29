@@ -27,7 +27,7 @@ export class MiHomePlug {
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-   // this.service.setCharacteristic(this.platform.Characteristic.Model, accessory.displayName);
+    // this.service.setCharacteristic(this.platform.Characteristic.Model, accessory.displayName);
 
     // each service must implement at-mimimum the "required characteristics" for the given service type
     // see https://github.com/homebridge/HAP-NodeJS/blob/master/src/lib/gen/HomeKit.ts
@@ -49,7 +49,7 @@ export class MiHomePlug {
         method: 'post',
         url: this.platform.baseURL + '/api/v1/subdevices/power_on',
         headers: {
-          "Content-type": "application/json"
+          'Content-type': 'application/json',
         },
         data: { id: parseInt(this.accessory.context.device.id) },
         auth: {
@@ -65,7 +65,7 @@ export class MiHomePlug {
         method: 'post',
         url: this.platform.baseURL + '/api/v1/subdevices/power_off',
         headers: {
-          "Content-type": "application/json"
+          'Content-type': 'application/json',
         },
         data: { id: parseInt(this.accessory.context.device.id) },
         auth: {
@@ -74,7 +74,7 @@ export class MiHomePlug {
         },
       }).then(res => this.platform.log.debug(res.data)).catch(err => {
         this.platform.log.error(err);
-        callback(err)
+        callback(err);
       });
     }
   }
@@ -99,7 +99,7 @@ export class MiHomePlug {
       method: 'post',
       url: this.platform.baseURL + '/api/v1/subdevices/show',
       headers: {
-        "Content-type": "application/json"
+        'Content-type': 'application/json',
       },
       data: { id: parseInt(this.accessory.context.device.id) },
       auth: {
@@ -108,18 +108,18 @@ export class MiHomePlug {
       },
     }).then(response => {
       this.platform.log.debug(`Got response status ${response.data.status} from id ${this.accessory.context.device.id} with name ${this.accessory.displayName} power state ${response.data.data.power_state}`);
-    //  this.platform.log.debug(response.data);
+      //  this.platform.log.debug(response.data);
       if (response.data.data.power_state == 1 || response.data.data.power_state == true) {
         callback(null, true);
       } else if (response.data.data.power_state == 0 || response.data.data.power_state == false) {
         callback(null, false);
       } else {
-        this.platform.log.info('Non boolean power_state?')
-        callback(new Error("non boolean power_state"));
+        this.platform.log.info('Non boolean power_state?');
+        callback(new Error('non boolean power_state'));
       }
     }).catch(error => {
       this.platform.log.error(`Got an error ${error.response.status} from ${this.accessory.context.device.label} with id ${this.accessory.context.device.id}`);
-//      this.platform.log.error(`Error body ${error.response.data}`);
+      //      this.platform.log.error(`Error body ${error.response.data}`);
       callback(error);
     });
   }
