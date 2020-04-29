@@ -67,7 +67,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 				  this.log.info(`Successfully authenticated with username (${this.username}) and got APIKEY (${this.apiKey})`)
 			  }
 		  } else {
-			  this.log.error(`Non Success status code, expected sucess got '${response.data.status}'`);
+			  this.log.error(`Non Success status code, expected success got '${response.data.status}'`);
 			  // should disable the plugin
 		  }
 	  }).catch(error => {
