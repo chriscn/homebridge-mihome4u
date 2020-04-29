@@ -1,9 +1,13 @@
-import { CharacteristicEventTypes } from 'homebridge';
-import type { Service, PlatformAccessory, CharacteristicValue, CharacteristicSetCallback, CharacteristicGetCallback} from 'homebridge';
+import type {
+	CharacteristicGetCallback,
+	CharacteristicSetCallback,
+	CharacteristicValue,
+	PlatformAccessory,
+	Service
+} from 'homebridge';
+import {CharacteristicEventTypes} from 'homebridge';
 
-import axios from 'axios';
-
-import { MiHomePlatform } from '../platform';
+import {MiHomePlatform} from '../platform';
 
 export class MiHomePlug {
 	private service: Service;
