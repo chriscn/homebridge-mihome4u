@@ -19,7 +19,6 @@
     "semi": ["warn", "always"],
     "comma-dangle": ["warn", "always-multiline"],
     "dot-notation": "warn",
-    "eqeqeq": "warn",
     "curly": ["warn", "all"],
     "brace-style": ["warn"],
     "prefer-arrow-callback": ["warn"],
