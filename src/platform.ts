@@ -124,7 +124,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
                 this.accessories.push(accessory);
                 break;
               default:
-                this.log.info(`Unknown device type of ${device.device_type}, not adding.` +
+                this.log.info(`Unknown device type of ${device.device_type}, not adding. ` +
                 'Please report this is that in future we can add it!');
             }
 
