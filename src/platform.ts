@@ -89,6 +89,10 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
     }
   }
 
+  removeAccessory(accessory: PlatformAccessory) {
+
+  }
+
   // calls the api to get a list of all the subdevices
   discoverDevices() {
     axios(this.baseURL + '/api/v1/subdevices/list', {
@@ -159,5 +163,7 @@ export interface MiHomeAccessory {
 }
 
 export enum DeviceType {
-  CONTROL = 'control'
+  CONTROL = 'control',
+  LEGACY = 'legacy',
+  UNKNOWN = "unkown"
 }
