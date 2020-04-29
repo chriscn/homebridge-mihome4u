@@ -115,17 +115,17 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 					this.log.info(`Registering new accessory with name ${friendlyName} with id ${device.id}`);
 
 					const accessory = new this.api.platformAccessory(friendlyName, uuid);
-
 					accessory.context.device = device;
 
-					switch (device.device_type.toString()) {
-						case "control":
+					switch (device.device_type.toString().toLowerCase()) {
+						case 'control':
 							new MiHomePlug(this, accessory);
+							this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+							this.accessories.push(accessory);
+						default:
+							this.log.info(`Unknown device type of ${device.device_type}, not adding. Please report this is that in future we can add it!`);
 					}
 
-					this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
-
-					this.accessories.push(accessory);
 				}
 			}
 		} else {
