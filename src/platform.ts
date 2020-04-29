@@ -47,6 +47,10 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 
       this.discoverDevices();
     });
+
+    this.api.on(APIEvent.SHUTDOWN, async () => {
+      this.log.debug(`Calling shutdown handler.`);
+    });
   }
 
   async authentication() {
