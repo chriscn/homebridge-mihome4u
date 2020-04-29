@@ -36,7 +36,6 @@ export class MiHomePlug {
     this.service.getCharacteristic(this.platform.Characteristic.On)
       .on(CharacteristicEventTypes.SET, this.setOn.bind(this))                // SET - bind to the `setOn` method below
       .on(CharacteristicEventTypes.GET, this.getOn.bind(this));               // GET - bind to the `getOn` method below
-
   }
 
   /**
@@ -66,7 +65,7 @@ export class MiHomePlug {
     this.platform.log.debug(`getting on for ${this.accessory.displayName} with id ${this.accessory.context.device.id}`);
 
     axios(this.platform.baseURL + `/api/v1/subdevices/show`, {
-      method: 'GET',
+      method: 'POST',
       auth: {
         username: this.platform.username,
         password: this.platform.apiKey,
@@ -76,7 +75,8 @@ export class MiHomePlug {
       },
       responseType: 'json',
     }).then(response => {
-      this.platform.log.info(`Got response status ${response.data.status}`);
+      this.platform.log.debug(`Got response status ${response.data.status} from id ${this.accessory.context.device.id}`);
+      this.platform.log.debug(response.data.data);
     }).catch(error => {
       this.platform.log.error(`Got an error ${error.response.status} from ${this.accessory.context.device.label} with id ${this.accessory.context.device.id}`);
     });
@@ -90,6 +90,6 @@ export class MiHomePlug {
     // you must call the callback function
     // the first argument should be null if there were no errors
     // the second argument should be the value to return
-    callback(null, true);
+    callback(null, false);
   }
 }
