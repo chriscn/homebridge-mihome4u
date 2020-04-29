@@ -1,9 +1,9 @@
-import { APIEvent } from 'homebridge';
-import type { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig } from 'homebridge';
+import type {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig} from 'homebridge';
+import {APIEvent} from 'homebridge';
 
-import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
+import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
 
-import { MiHomePlug } from './accessory/plug';
+import {MiHomePlug} from './accessory/plug';
 
 import axios from 'axios';
 
@@ -21,7 +21,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 
   public username: string;
   public baseURL: string; // should usually be https://mihome4u.co.uk
-  public apiKey: string = "";
+  public apiKey = '';
 
   constructor(
 	  public readonly log: Logger,
@@ -32,7 +32,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 	  this.log.debug(`Found config with username ${this.config.username} and password ${this.config.password}`);
 
 	  this.username = this.config.username;
-	  this.baseURL = this.config.baseURL || "https://mihome4u.co.uk";
+	  this.baseURL = this.config.baseURL || 'https://mihome4u.co.uk';
 
 
 	  // When this event is fired it means Homebridge has restored all cached accessories from disk.
@@ -51,20 +51,20 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 
   async authentication() {
 	  await axios(this.baseURL + '/api/v1/users/profile', {
-		  method: "GET",
+		  method: 'GET',
 		  auth: {
 			  username: this.username,
-			  password: this.config.password
+			  password: this.config.password,
 		  },
-		  responseType: "json"
+		  responseType: 'json',
 	  }).then(response => {
-		  if (response.data.status == "success") {
-			  if (response.data.data.api_key == undefined || response.data.data.api_key == "") {
-				  this.log.error(`APIKey was undefined or empty, may be a weird bug. Please report this.`)
+		  if (response.data.status == 'success') {
+			  if (response.data.data.api_key == undefined || response.data.data.api_key == '') {
+				  this.log.error('APIKey was undefined or empty, may be a weird bug. Please report this.');
 				  this.log.error(`Error Message: ${response.data.data.message}`);
 			  } else {
 				  this.apiKey = response.data.data.api_key.toString();
-				  this.log.info(`Successfully authenticated with username (${this.username}) and got APIKEY (${this.apiKey})`)
+				  this.log.info(`Successfully authenticated with username (${this.username}) and got APIKEY (${this.apiKey})`);
 			  }
 		  } else {
 			  this.log.error(`Non Success status code, expected success got '${response.data.status}'`);
@@ -95,45 +95,45 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 
   // calls the api to get a list of all the subdevices
   discoverDevices() {
-	axios(this.baseURL + '/api/v1/subdevices/list', {
-		method: "GET",
-		auth: {
-			username: this.username,
-			password: this.apiKey
-		},
-		responseType: "json"
-	}).then(response => {
-		this.log.debug('Adding subdevices');
-		let data = response.data.data;
+    axios(this.baseURL + '/api/v1/subdevices/list', {
+      method: 'GET',
+      auth: {
+        username: this.username,
+        password: this.apiKey,
+      },
+      responseType: 'json',
+    }).then(response => {
+      this.log.debug('Adding subdevices');
+      const data = response.data.data;
 
-		if (response.data.status === "success") {
-			for (const device of data) {
-				const uuid = this.api.hap.uuid.generate(device.id.toString())
-				const friendlyName: string = this.toTitleCase(device.label.match(/(?:\d{3}-\d{2} )?([\w \-]+)/)[1]|| device.label) // cleans up the name to be more homekit elagant
+      if (response.data.status === 'success') {
+        for (const device of data) {
+          const uuid = this.api.hap.uuid.generate(device.id.toString());
+          const friendlyName: string = this.toTitleCase(device.label.match(/(?:\d{3}-\d{2} )?([\w \-]+)/)[1]|| device.label); // cleans up the name to be more homekit elagant
 
-				if (!this.accessories.find(accessory => accessory.UUID === uuid)) {
-					this.log.info(`Registering new accessory with name ${friendlyName} with id ${device.id}`);
+          if (!this.accessories.find(accessory => accessory.UUID === uuid)) {
+            this.log.info(`Registering new accessory with name ${friendlyName} with id ${device.id}`);
 
-					const accessory = new this.api.platformAccessory(friendlyName, uuid);
-					accessory.context.device = device;
+            const accessory = new this.api.platformAccessory(friendlyName, uuid);
+            accessory.context.device = device;
 
-					switch (device.device_type.toString().toLowerCase()) {
-						case 'control':
-							new MiHomePlug(this, accessory);
-							this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
-							this.accessories.push(accessory);
-						default:
-							this.log.info(`Unknown device type of ${device.device_type}, not adding. Please report this is that in future we can add it!`);
-					}
+            switch (device.device_type.toString().toLowerCase()) {
+              case 'control':
+                new MiHomePlug(this, accessory);
+                this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+                this.accessories.push(accessory);
+              default:
+                this.log.info(`Unknown device type of ${device.device_type}, not adding. Please report this is that in future we can add it!`);
+            }
 
-				}
-			}
-		} else {
-			this.log.error(`Non success response type got response: ${response.data.status}`);
-		}
-	}).catch(error => {
-		this.log.error(error);
-	})
+          }
+        }
+      } else {
+        this.log.error(`Non success response type got response: ${response.data.status}`);
+      }
+    }).catch(error => {
+      this.log.error(error);
+    });
   }
 
   toTitleCase = (phrase: string) => {
@@ -146,4 +146,18 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 	    .replace('Rhs', 'RHS')
 	    .trim();
   }
+}
+
+export interface MiHomeAccessory {
+    id: number;
+    label: string;
+    device_id: number;
+    power_state: boolean; // is a number in api call should convert
+    device_type: DeviceType;
+    voltage: number;
+    frequency: number;
+}
+
+export enum DeviceType {
+    CONTROL = 'control'
 }
