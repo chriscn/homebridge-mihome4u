@@ -109,7 +109,9 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
       if (response.data.status == 'success') {
         for (const device of data) {
           const uuid = this.api.hap.uuid.generate(device.id.toString());
-          const friendlyName: string = this.toTitleCase(device.label.match(/(?:\d{3}-\d{2} )?([\w \-]+)/)[1] || device.label); // cleans up the name to be more homekit elagant
+          const friendlyName: string = this.toTitleCase(
+            device.label.match(/(?:\d{3}-\d{2} )?([\w -]+)/)[1] || device.label
+          ); // cleans up the name to be more homekit elagant
 
           if (!this.accessories.find(accessory => accessory.UUID === uuid)) {
             this.log.info(`Registering new accessory with name ${friendlyName} with id ${device.id}`);
@@ -124,7 +126,8 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
                 this.accessories.push(accessory);
                 break;
               default:
-                this.log.info(`Unknown device type of ${device.device_type}, not adding. Please report this is that in future we can add it!`);
+                this.log.info(`Unknown device type of ${device.device_type}, not adding.` +
+                `Please report this is that in future we can add it!`);
             }
 
           }
