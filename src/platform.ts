@@ -93,11 +93,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
     this.accessories.push(accessory);
   }
 
-  /**
-   * This is an example method showing how to register discovered accessories.
-   * Accessories must only be registered once, previously created accessories
-   * must not be registered again to prevent "duplicate UUID" errors.
-   */
+  // calls the api to get a list of all the subdevices
   discoverDevices() {
 	axios(this.baseURL + '/api/v1/subdevices/list', {
 		method: "GET",
@@ -113,7 +109,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 		if (response.data.status === "success") {
 			for (const device of data) {
 				const uuid = this.api.hap.uuid.generate(device.id.toString())
-				const friendlyName: string = device.label.match(/(?:\d{3}-\d{2} )?([\w \-]+)/)[1] || device.label
+				const friendlyName: string = this.toTitleCase(device.label.match(/(?:\d{3}-\d{2} )?([\w \-]+)/)[1].trim() || device.label.trim()) // cleans up the name to be more homekit elagant
 
 				if (!this.accessories.find(accessory => accessory.UUID === uuid)) {
 					this.log.info(`Registering new accessory with name ${friendlyName} with id ${device.id}`);
@@ -138,5 +134,13 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
 	}).catch(error => {
 		this.log.error(error);
 	})
+  }
+
+  toTitleCase = (phrase: string) => {
+    return phrase
+	    .toLowerCase()
+	    .split(' ')
+	    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+	    .join(' ');
   }
 }
