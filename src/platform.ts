@@ -144,6 +144,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
       .join(' ')
       .replace('Lhs', 'LHS') // LHS should be in all capitals standing for Left hand side
       .replace('Rhs', 'RHS')
+      .replace('Tv', 'TV')
       .trim();
   };
 }
