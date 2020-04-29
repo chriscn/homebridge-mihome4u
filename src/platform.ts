@@ -82,7 +82,6 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
   configureAccessory(accessory: PlatformAccessory) {
     this.log.info('Restoring accessory from cache:', accessory.displayName);
 
-
     // create the accessory handler
     // this is imported from `example.ts`
     new MiHomePlug(this, accessory);
@@ -127,7 +126,6 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
                 this.log.info(`Unknown device type of ${device.device_type}, not adding. ` +
                 'Please report this is that in future we can add it!');
             }
-
           }
         }
       } else {
