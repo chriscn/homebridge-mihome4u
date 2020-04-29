@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Link the project
+      - name: Lint the project
         run: npm run lint
 
       - name: Build the project
