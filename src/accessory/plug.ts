@@ -17,22 +17,22 @@ export class MiHomePlug {
 		private readonly platform: MiHomePlatform,
 		private readonly accessory: PlatformAccessory,
 	) {
+
 		this.accessory.getService(this.platform.Service.AccessoryInformation)!
 			.setCharacteristic(this.platform.Characteristic.Manufacturer, 'Energinie')
 			.setCharacteristic(this.platform.Characteristic.Model, "Default")
 			.setCharacteristic(this.platform.Characteristic.SerialNumber, 'Default-Serial');
-
 		// get the LightBulb service if it exists, otherwise create a new LightBulb service
 		// you can create multiple services for each accessory
-		this.service = this.accessory.getService(this.platform.Service.Lightbulb) ?? this.accessory.addService(this.platform.Service.Lightbulb);
+		this.service = this.accessory.getService(this.platform.Service.Switch) ?? this.accessory.addService(this.platform.Service.Switch);
 
 		// To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
 		// when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
-		this.accessory.getService('NAME') ?? this.accessory.addService(this.platform.Service.Lightbulb, 'NAME', 'USER_DEFINED_SUBTYPE');
+		// this.accessory.getService(this.platform.Service.AccessoryInformation.name) ?? this.accessory.addService(this.platform.Service.Switch, 'TEST', 'USER_DEFINED_SUBTYPE');
 
 		// set the service name, this is what is displayed as the default name on the Home app
 		// in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-		this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.exampleDisplayName);
+		this.service.setCharacteristic(this.platform.Characteristic.Model, accessory.displayName);
 
 		// each service must implement at-mimimum the "required characteristics" for the given service type
 		// see https://github.com/homebridge/HAP-NodeJS/blob/master/src/lib/gen/HomeKit.ts
@@ -42,25 +42,6 @@ export class MiHomePlug {
 			.on(CharacteristicEventTypes.SET, this.setOn.bind(this))                // SET - bind to the `setOn` method below
 			.on(CharacteristicEventTypes.GET, this.getOn.bind(this));               // GET - bind to the `getOn` method below
 
-		// register handlers for the Brightness Characteristic
-		this.service.getCharacteristic(this.platform.Characteristic.Brightness)
-			.on(CharacteristicEventTypes.SET, this.setBrightness.bind(this));       // SET - bind to the 'setBrightness` method below
-
-		// EXAMPLE ONLY
-		// Example showing how to update the state of a Characteristic asynchronously instead
-		// of using the `on('get')` handlers.
-		//
-		// Here we change update the brightness to a random value every 5 seconds using
-		// the `updateCharacteristic` method.
-		setInterval(() => {
-			// assign the current brightness a random value between 0 and 100
-			const currentBrightness = Math.floor(Math.random() * 100);
-
-			// push the new value to HomeKit
-			this.service.updateCharacteristic(this.platform.Characteristic.Brightness, currentBrightness);
-
-			this.platform.log.debug('Pushed updated current Brightness state to HomeKit:', currentBrightness);
-		}, 10000);
 	}
 
 	/**
@@ -94,6 +75,7 @@ export class MiHomePlug {
 	getOn(callback: CharacteristicGetCallback) {
 
 		// implement your own code to check if the device is on
+		this.exampleStates.On = !this.exampleStates.On;
 		const isOn = this.exampleStates.On;
 
 		this.platform.log.debug('Get Characteristic On ->', isOn);
@@ -102,20 +84,5 @@ export class MiHomePlug {
 		// the first argument should be null if there were no errors
 		// the second argument should be the value to return
 		callback(null, isOn);
-	}
-
-	/**
-	 * Handle "SET" requests from HomeKit
-	 * These are sent when the user changes the state of an accessory, for example, changing the Brightness
-	 */
-	setBrightness(value: CharacteristicValue, callback: CharacteristicSetCallback) {
-
-		// implement your own code to set the brightness
-		this.exampleStates.Brightness = value as number;
-
-		this.platform.log.debug('Set Characteristic Brightness -> ', value);
-
-		// you must call the callback function
-		callback(null);
 	}
 }
