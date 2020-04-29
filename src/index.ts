@@ -7,5 +7,5 @@ import {MiHomePlatform} from './platform';
  * This method registers the platform with Homebridge
  */
 export = (api: API) => {
-	api.registerPlatform(PLATFORM_NAME, MiHomePlatform);
+  api.registerPlatform(PLATFORM_NAME, MiHomePlatform);
 }

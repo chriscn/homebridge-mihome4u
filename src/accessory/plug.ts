@@ -1,21 +1,21 @@
 import type {
-	CharacteristicGetCallback,
-	CharacteristicSetCallback,
-	CharacteristicValue,
-	PlatformAccessory,
-	Service
+  CharacteristicGetCallback,
+  CharacteristicSetCallback,
+  CharacteristicValue,
+  PlatformAccessory,
+  Service
 } from 'homebridge';
 import {CharacteristicEventTypes} from 'homebridge';
 
 import {MiHomePlatform} from '../platform';
 
 export class MiHomePlug {
-	private service: Service;
+  private service: Service;
 
-	private exampleStates = {
-		On: false,
-		Brightness: 100,
-	}
+  private exampleStates = {
+    On: false,
+    Brightness: 100,
+  }
 
 	constructor(
 		private readonly platform: MiHomePlatform,
