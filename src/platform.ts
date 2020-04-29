@@ -80,14 +80,13 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
    * It should be used to setup event handlers for characteristics and update respective values.
    */
   configureAccessory(accessory: PlatformAccessory) {
-    this.log.info('Restoring accessory from cache:', accessory.displayName);
-
-    // create the accessory handler
-    // this is imported from `example.ts`
-    new MiHomePlug(this, accessory);
-
-    // add the restored accessory to the accessories cache so we can track if it has already been registered
-    this.accessories.push(accessory);
+    if (accessory.context.device.device_type.toLowerCase() == "control") {
+      this.log.info('Restoring accessory from cache:', accessory.displayName);
+      new MiHomePlug(this, accessory);
+      this.accessories.push(accessory);
+    } else {
+      this.log.info(`Unknown device found in cache with type ${accessory.context.device.device}`);
+    }
   }
 
   // calls the api to get a list of all the subdevices
