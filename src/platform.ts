@@ -49,7 +49,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
     });
 
     this.api.on(APIEvent.SHUTDOWN, async () => {
-      this.log.debug(`Calling shutdown handler.`);
+      this.log.debug('Calling shutdown handler.');
     });
   }
 
@@ -84,7 +84,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
    * It should be used to setup event handlers for characteristics and update respective values.
    */
   configureAccessory(accessory: PlatformAccessory) {
-    if (accessory.context.device.device_type.toLowerCase() == "control") {
+    if (accessory.context.device.device_type.toLowerCase() == 'control') {
       this.log.info('Restoring accessory from cache:', accessory.displayName);
       new MiHomePlug(this, accessory);
       this.accessories.push(accessory);
@@ -165,5 +165,5 @@ export interface MiHomeAccessory {
 export enum DeviceType {
   CONTROL = 'control',
   LEGACY = 'legacy',
-  UNKNOWN = "unkown"
+  UNKNOWN = 'unkown'
 }
