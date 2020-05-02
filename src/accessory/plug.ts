@@ -59,39 +59,17 @@ export class MiHomePlug {
   identify(callback: CharacteristicGetCallback) {
     this.platform.log.debug(`Identifying device ${this.accessory.displayName} with simple on off`);
 
-    axios({
-      method: 'post',
-      url: this.platform.baseURL + '/api/v1/subdevices/power_on',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      data: { id: parseInt(this.accessory.context.device.id) },
-      auth: {
-        username: this.platform.username,
-        password: this.platform.apiKey,
-      },
-    }).then(res => this.platform.log.debug(res.data)).catch(err => {
+    this.mihome({url: '/api/v1/subdevices/power_on'}).then(res => this.platform.log.debug(res.data)).catch(err => {
       this.platform.log.error(err);
-      callback(err);
+      callback(null);
     });
 
-    setTimeout(() => {
-      axios({
-        method: 'post',
-        url: this.platform.baseURL + '/api/v1/subdevices/power_off',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        data: { id: parseInt(this.accessory.context.device.id) },
-        auth: {
-          username: this.platform.username,
-          password: this.platform.apiKey,
-        },
-      }).then(res => this.platform.log.debug(res.data)).catch(err => {
-        this.platform.log.error(err);
-        callback(err);
-      });
-    }, 2000); // turn off after two seconds.
+    setTimeout(() => {}, 2000); // wait two seconds.
+
+    this.mihome({url: '/api/v1/subdevices/power_off'}).then(res => this.platform.log.debug(res.data)).catch(err => {
+      this.platform.log.error(err);
+      callback(null);
+    });
   }
 
   /**
