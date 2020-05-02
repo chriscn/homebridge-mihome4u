@@ -43,7 +43,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
       this.log.debug('Executed didFinishLaunching callback');
       // run the method to discover / register your devices as accessories
 
-      await this.authentication(); // get apiKey from MiHome to use instead of password.
+      await this.authentication(); // get apiKey from MiHome to use instead of password
 
       this.discoverDevices();
     });
@@ -70,6 +70,8 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
           this.apiKey = response.data.data.api_key.toString();
           this.log.info(`Successfully authenticated with username (${this.username}) and got APIKEY (${this.apiKey})`);
         }
+      } else if (response.data.status == 'access-denied') {
+        this.log.error('Invalid username of password, please check your login details.');
       } else {
         this.log.error(`Non Success status code, expected success got '${response.data.status}'`);
         // should disable the plugin
