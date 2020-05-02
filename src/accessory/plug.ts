@@ -127,7 +127,7 @@ export class MiHomePlug {
       }
     }).catch(error => {
       this.platform.log.error(`Got an error ${error.response.status} from ${this.accessory.context.device.label} with id ${this.accessory.context.device.id}`);
-      //      this.platform.log.error(`Error body ${error.response.data}`);
+      this.platform.log.error(`This may be due to that device is offline. Please check your gateway for ${this.accessory.context.device.label}`);
       callback(error);
     });
   }
