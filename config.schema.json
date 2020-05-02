@@ -8,9 +8,19 @@
     "properties": {
       "name": {
         "title": "Name",
-        "type": "string",
+          "type": "string",
         "required": true,
-        "default": "Example Dynamic Platform"
+        "default": "MiHome"
+      },
+      "username": {
+        "title": "Username",
+        "type": "string",
+        "required": true
+      },
+      "password": {
+        "title": "Password",
+        "type": "string",
+        "required": true
       }
     }
   }
