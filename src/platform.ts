@@ -30,7 +30,8 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
   ) {
     this.log.debug('Finished initializing platform:', this.config.platform);
     this.log.debug(`Found config with username ${this.config.username} and password ${this.config.password}`);
-
+    this.log.debug('This is currently ALPHA software. It may break :-)');
+    
     this.username = this.config.username;
     this.baseURL = this.config.baseURL || 'https://mihome4u.co.uk';
 
