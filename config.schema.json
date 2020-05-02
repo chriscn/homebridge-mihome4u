@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "MiHome4U",
+  "pluginAlias": "MiHome",
   "pluginType": "platform",
   "headerDisplay": "Homebridge plugin to manage MiHome4U devices by Energinie",
   "singular": true,
