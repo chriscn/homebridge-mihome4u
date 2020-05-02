@@ -7,6 +7,20 @@ import axios from 'axios';
 
 export class MiHomePlug {
   private service: Service;
+  private mihome = axios.create({
+    method: 'POST',
+    baseURL: this.platform.baseURL,
+    headers: {
+      'Content-type': 'application/json',
+    },
+    auth: {
+      username: this.platform.username,
+      password: this.platform.apiKey,
+    },
+    data: {
+      id: parseInt(this.accessory.context.data.id),
+    },
+  });
 
   constructor(
     private readonly platform: MiHomePlatform,
@@ -87,36 +101,14 @@ export class MiHomePlug {
   setOn(value: CharacteristicValue, callback: CharacteristicSetCallback) {
     // post request to the api
     if (value) {
-      axios({
-        method: 'post',
-        url: this.platform.baseURL + '/api/v1/subdevices/power_on',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        data: { id: parseInt(this.accessory.context.device.id) },
-        auth: {
-          username: this.platform.username,
-          password: this.platform.apiKey,
-        },
-      }).then(res => this.platform.log.debug(res.data)).catch(err => {
+      this.mihome({url: '/api/v1/subdevices/power_on'}).then(res => this.platform.log.debug(res.data)).catch(err => {
         this.platform.log.error(err);
-        callback(err);
+        callback(null);
       });
     } else {
-      axios({
-        method: 'post',
-        url: this.platform.baseURL + '/api/v1/subdevices/power_off',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        data: { id: parseInt(this.accessory.context.device.id) },
-        auth: {
-          username: this.platform.username,
-          password: this.platform.apiKey,
-        },
-      }).then(res => this.platform.log.debug(res.data)).catch(err => {
+      this.mihome({url: '/api/v1/subdevices/power_off'}).then(res => this.platform.log.debug(res.data)).catch(err => {
         this.platform.log.error(err);
-        callback(err);
+        callback(null);
       });
     }
   }
@@ -137,18 +129,7 @@ export class MiHomePlug {
   getOn(callback: CharacteristicGetCallback) {
     this.platform.log.debug(`getting on for ${this.accessory.displayName} with id ${this.accessory.context.device.id}`);
 
-    axios({
-      method: 'post',
-      url: this.platform.baseURL + '/api/v1/subdevices/show',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      data: { id: parseInt(this.accessory.context.device.id) },
-      auth: {
-        username: this.platform.username,
-        password: this.platform.apiKey,
-      },
-    }).then(response => {
+    this.mihome({url: '/api/v1/subdevices/show'}).then(response => {
       this.platform.log.debug(`Got response status ${response.data.status} from id ${this.accessory.context.device.id} with name ${this.accessory.displayName} power state ${response.data.data.power_state}`);
       //  this.platform.log.debug(response.data);
       if (response.data.data.power_state == 1 || response.data.data.power_state == true) {
@@ -157,12 +138,12 @@ export class MiHomePlug {
         callback(null, false);
       } else {
         this.platform.log.info('Non boolean power_state?');
-        callback(new Error('non boolean power_state'));
       }
+      callback(null);
     }).catch(error => {
       this.platform.log.error(`Got an error ${error.response.status} from ${this.accessory.context.device.label} with id ${this.accessory.context.device.id}`);
       this.platform.log.error(`This may be due to that device is offline. Please check your gateway for ${this.accessory.context.device.label}`);
-      callback(error);
+      callback(null);
     });
   }
 }
