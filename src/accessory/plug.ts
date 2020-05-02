@@ -34,9 +34,16 @@ export class MiHomePlug {
 
     // register handlers for the On/Off Characteristis
 
+    this.service.getCharacteristic(this.platform.Characteristic.Identify)
+      .on(CharacteristicEventTypes.GET, this.identify.bind(this));
+
     this.service.getCharacteristic(this.platform.Characteristic.On)
       .on(CharacteristicEventTypes.SET, this.setOn.bind(this))                // SET - bind to the `setOn` method below
       .on(CharacteristicEventTypes.GET, this.getOn.bind(this));               // GET - bind to the `getOn` method below
+  }
+
+  identify(callback: CharacteristicGetCallback) {
+
   }
 
   /**
