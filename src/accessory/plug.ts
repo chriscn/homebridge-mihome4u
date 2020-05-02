@@ -15,7 +15,7 @@ export class MiHomePlug {
 
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Energinie')
-      .setCharacteristic(this.platform.Characteristic.Model, 'Default')
+      .setCharacteristic(this.platform.Characteristic.Model, this.accessory.context.device.device_type)
       .setCharacteristic(this.platform.Characteristic.SerialNumber, this.accessory.context.device.label);
     // get the LightBulb service if it exists, otherwise create a new LightBulb service
     // you can create multiple services for each accessory
