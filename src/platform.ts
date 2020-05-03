@@ -3,7 +3,7 @@ import {APIEvent} from 'homebridge';
 
 import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
 
-import {MiHomePlug} from './accessory/plug';
+import {MiHomeAccessory} from './accessory/MiHomeAccessory';
 
 import axios from 'axios';
 
@@ -89,7 +89,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
   configureAccessory(accessory: PlatformAccessory) {
     if (accessory.context.device.device_type.toLowerCase() == 'control') {
       this.log.info('Restoring accessory from cache:', accessory.displayName);
-      new MiHomePlug(this, accessory);
+      new MiHomeAccessory(this, accessory);
       this.accessories.push(accessory);
     } else {
       this.log.info(`Unknown device found in cache with type ${accessory.context.device.device}`);
@@ -125,7 +125,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
             switch (device.device_type.toString().toLowerCase()) {
               case 'light':
               case 'control':
-                new MiHomePlug(this, accessory);
+                new MiHomeAccessory(this, accessory);
                 this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
                 this.accessories.push(accessory);
                 break;
