@@ -15,10 +15,12 @@ export class MiHomePlug {
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Energenie')
       .setCharacteristic(this.platform.Characteristic.Model, this.accessory.context.device.device_type)
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, this.accessory.context.device.label);
+      .setCharacteristic(this.platform.Characteristic.SerialNumber, this.accessory.context.device.label)
+      .setCharacteristic(this.platform.Characteristic.Name, this.accessory.displayName);
+
     // get the LightBulb service if it exists, otherwise create a new LightBulb service
     // you can create multiple services for each accessory
-    this.service = this.accessory.getService(this.platform.Service.Switch) ?? this.accessory.addService(this.platform.Service.Switch);
+    this.service = this.accessory.getService(this.platform.Service.Outlet) ?? this.accessory.addService(this.platform.Service.Outlet, this.accessory.displayName);
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
     // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
@@ -55,9 +57,15 @@ export class MiHomePlug {
         username: this.platform.username,
         password: this.platform.apiKey,
       },
-    }).then(res => this.platform.log.debug(res.data)).catch(err => {
+    }).then(res => {
+      if (res.data.status != "success") {
+        this.platform.log.error(`When attempting to identify [on] ${this.accessory.displayName} got a non success response of ${res.data.status}`);
+      } else {
+        callback(null);
+      }
+    }).catch(err => {
       this.platform.log.error(err);
-      callback(err);
+      callback(null);
     });
 
     setTimeout(() => {
@@ -72,9 +80,15 @@ export class MiHomePlug {
           username: this.platform.username,
           password: this.platform.apiKey,
         },
-      }).then(res => this.platform.log.debug(res.data)).catch(err => {
+      }).then(res => {
+        if (res.data.status != "success") {
+          this.platform.log.error(`When attempting to identify [off] ${this.accessory.displayName} got a non success response of ${res.data.status}`);
+        } else {
+          callback(null);
+        }
+      }).catch(err => {
         this.platform.log.error(err);
-        callback(err);
+        callback(null);
       });
     }, 2000); // turn off after two seconds.
   }
