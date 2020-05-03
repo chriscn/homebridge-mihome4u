@@ -5,7 +5,7 @@ import {MiHomePlatform} from '../platform';
 
 import axios from 'axios';
 
-export class MiHomePlug {
+export class MiHomeAccessory {
   private service: Service;
 
   constructor(
