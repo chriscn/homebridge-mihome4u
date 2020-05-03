@@ -97,7 +97,13 @@ export class MiHomePlug {
           username: this.platform.username,
           password: this.platform.apiKey,
         },
-      }).then(res => this.platform.log.debug(res.data)).catch(err => {
+      }).then(res => {
+        if (res.data.status != "success") {
+          this.platform.log.error(`When attempting to turn on ${this.accessory.displayName} got a non success response of ${res.data.status}`);
+        } else {
+          callback(null);
+        }
+      }).catch(err => {
         this.platform.log.error(err);
         callback(null);
       });
@@ -113,7 +119,13 @@ export class MiHomePlug {
           username: this.platform.username,
           password: this.platform.apiKey,
         },
-      }).then(res => this.platform.log.debug(res.data)).catch(err => {
+      }).then(res => {
+        if (res.data.status != "success") {
+          this.platform.log.error(`When attempting to turn off ${this.accessory.displayName} got a non success response of ${res.data.status}`);
+        } else {
+          callback(null);
+        }
+      }).catch(err => {
         this.platform.log.error(err);
         callback(null);
       });
@@ -149,17 +161,20 @@ export class MiHomePlug {
       },
     }).then(response => {
       this.platform.log.debug(`Got response status ${response.data.status} from id ${this.accessory.context.device.id} with name ${this.accessory.displayName} power state ${response.data.data.power_state}`);
-      //  this.platform.log.debug(response.data);
-      if (response.data.data.power_state == 1 || response.data.data.power_state == true) {
+      this.platform.log.debug(response.data.data.power_state);
+
+      const powerState = Boolean(response.data.data.power_state);
+
+      if (powerState) {
         callback(null, true);
-      } else if (response.data.data.power_state == 0 || response.data.data.power_state == false) {
+      } else if (!powerState) {
         callback(null, false);
       } else {
         this.platform.log.info('Non boolean power_state?');
+        callback(null, false);
       }
-      callback(null);
     }).catch(error => {
-      this.platform.log.error(`Got an error ${error.response.status} from ${this.accessory.context.device.label} with id ${this.accessory.context.device.id}`);
+      this.platform.log.error(`Got an error ${error} from ${this.accessory.context.device.label} with id ${this.accessory.context.device.id}`);
       this.platform.log.error(`This may be due to that device is offline. Please check your gateway for ${this.accessory.context.device.label}`);
       callback(null);
     });
