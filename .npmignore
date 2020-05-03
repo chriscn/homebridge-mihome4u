@@ -131,4 +131,5 @@ dist
 .yarn/build-state.yml
 .pnp.*
 
+.github/
 .idea/
