@@ -1,6 +1,7 @@
 # Ignore compiled code
 dist
 
+.idea/
 # ------------- Defaults ------------- #
 
 # Logs
@@ -118,3 +119,4 @@ dist
 .yarn/unplugged
 .yarn/build-state.yml
 .pnp.*
+.idea/codeStyles/Project.xml
