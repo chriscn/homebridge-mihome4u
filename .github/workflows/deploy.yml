@@ -36,7 +36,7 @@ jobs:
           CI: true
 
       - name: Bump minor version number
-        run: npm run release
+        run: npm version patch
 
       - run: npm publish
         env:
