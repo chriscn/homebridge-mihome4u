@@ -1,0 +1,47 @@
+name: Deploy to NPM
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 13.x]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache Node Modules
+        uses: actions/cache@v1
+        id: cache
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint the project
+        run: npm run lint
+
+      - name: Build the project
+        run: npm run build
+        env:
+          CI: true
+
+      - name: Bump minor version number
+        run: npm run release -- minor -ci
+
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
