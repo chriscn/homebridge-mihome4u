@@ -1,7 +1,7 @@
 {
   "displayName": "Homebridge MiHome",
   "name": "homebridge-mihome4u",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A short description about what your plugin does.",
   "license": "ISC",
   "repository": {
@@ -21,7 +21,7 @@
     "watch": "npm run build && npm link && nodemon",
     "build": "rimraf ./dist && tsc",
     "prepublishOnly": "npm run lint && npm run build",
-    "release": "release-it --patch"
+    "release": "bump"
   },
   "keywords": [
     "homebridge-plugin"
