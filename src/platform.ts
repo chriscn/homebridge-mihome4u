@@ -86,15 +86,18 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
    * This function is invoked when homebridge restores cached accessories from disk at startup.
    * It should be used to setup event handlers for characteristics and update respective values.
    */
-  configureAccessory(accessory: PlatformAccessory) {
-    if (accessory.context.device.device_type.toLowerCase() == 'control') {
-      this.log.info('Restoring accessory from cache:', accessory.displayName);
-      new MiHomePlug(this, accessory);
-      this.accessories.push(accessory);
-    } else {
-      this.log.info(`Unknown device found in cache with type ${accessory.context.device.device}`);
-    }
-  }
+   configureAccessory(accessory: PlatformAccessory) {
+     switch (accessory.context.device.device_type.toLowerCase()) {
+       case 'light':
+       case 'control':
+         this.log.info(`Restoring accessory from cache:"${accessory.displayName}" of type "${accessory.context.device.device_type}"`);
+         new MiHomePlug(this, accessory);
+         this.accessories.push(accessory);
+         break;
+       default:
+         this.log.info(`Unknown cached accessory type "${accessory.context.device.device_type}" for device "${accessory.displayName}"`);
+     }
+   }
 
   // calls the api to get a list of all the subdevices
   discoverDevices() {
