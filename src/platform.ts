@@ -1,4 +1,4 @@
-import type {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig} from 'homebridge';
+  import type {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig} from 'homebridge';
 import {APIEvent} from 'homebridge';
 
 import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
@@ -113,7 +113,7 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
         for (const device of data) {
           const uuid = this.api.hap.uuid.generate(device.id.toString());
           const friendlyName: string = this.toTitleCase(
-            device.label.match(/(?:\d{3}-\d{2} )?([\w -]+)/)[1] || device.label,
+            device.label.match(/(?:\d{3}-\d{2} )?([\w - '’]+)/)[1] || device.label,
           ); // cleans up the name to be more homekit elagant
 
           if (!this.accessories.find(accessory => accessory.UUID === uuid)) {
