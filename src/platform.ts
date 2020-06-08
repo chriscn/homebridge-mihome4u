@@ -86,18 +86,18 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
    * This function is invoked when homebridge restores cached accessories from disk at startup.
    * It should be used to setup event handlers for characteristics and update respective values.
    */
-   configureAccessory(accessory: PlatformAccessory) {
-     switch (accessory.context.device.device_type.toLowerCase()) {
-       case 'light':
-       case 'control':
-         this.log.info(`Restoring accessory from cache:"${accessory.displayName}" of type "${accessory.context.device.device_type}"`);
-         new MiHomePlug(this, accessory);
-         this.accessories.push(accessory);
-         break;
-       default:
-         this.log.info(`Unknown cached accessory type "${accessory.context.device.device_type}" for device "${accessory.displayName}"`);
-     }
-   }
+  configureAccessory(accessory: PlatformAccessory) {
+    switch (accessory.context.device.device_type.toLowerCase()) {
+      case 'light':
+      case 'control':
+        this.log.info(`Restoring accessory from cache:"${accessory.displayName}" of type "${accessory.context.device.device_type}"`);
+        new MiHomePlug(this, accessory);
+        this.accessories.push(accessory);
+        break;
+      default:
+        this.log.info(`Unknown cached accessory type "${accessory.context.device.device_type}" for device "${accessory.displayName}"`);
+    }
+  }
 
   // calls the api to get a list of all the subdevices
   discoverDevices() {
@@ -115,9 +115,18 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
       if (response.data.status == 'success') {
         for (const device of data) {
           const uuid = this.api.hap.uuid.generate(device.id.toString());
-          const friendlyName: string = this.toTitleCase(
-            device.label.match(/(?:\d{3}-\d{2} )?([\w - '’]+)/)[1] || device.label,
-          ); // cleans up the name to be more homekit elagant
+          let friendlyName = '';
+
+          if (this.config.regex.enabled) {
+            if (this.config.regex.match_string == undefined || this.config.regex.match_string == null || this.config.regex.match_string == '') {
+              friendlyName = this.toTitleCase(device.label);
+            } else {
+              friendlyName = this.toTitleCase(device.label.match(this.config.regex.match_string)[1]);
+            }
+          } else {
+            friendlyName = this.toTitleCase(device.label);
+          }
+          // cleans up the name to be more homekit elagant
 
           if (!this.accessories.find(accessory => accessory.UUID === uuid)) {
             this.log.info(`Registering new accessory with name ${friendlyName} with id ${device.id}`);
