@@ -38,6 +38,15 @@ jobs:
       - name: Bump minor version number
         run: npm version patch
 
+      - name: Commit new version number
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Updated version number
+          branch: master
+          commit_user_name: Update Version Number
+          commit_user_email: ccnethercott@gmail.com
+          commit_author: Author <actions@github.com>
+
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
