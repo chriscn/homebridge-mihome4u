@@ -51,12 +51,16 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - run: Update local repo
+        run: |
+          git fetch
+          git pull --all
+
       - name: Push new version to master
         run: git push
 
       - name: Push new version to develop
         run: |
-          git fetch
           git checkout develop
           git merge master
           git push
