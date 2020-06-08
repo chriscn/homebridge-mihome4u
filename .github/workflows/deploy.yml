@@ -26,6 +26,7 @@ jobs:
         with:
           node-version: '12.x'
           registry-url: 'https://registry.npmjs.org'
+
       - name: Install dependencies
         run: npm install
 
@@ -52,3 +53,9 @@ jobs:
 
       - name: Push new version to master
         run: git push
+
+      - name: Push new version to develop
+        run: |
+          git checkout develop
+          git merge master
+          git push
