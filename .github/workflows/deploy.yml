@@ -11,6 +11,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB }}
 
       - name: Cache Node Modules
         uses: actions/cache@v1
@@ -35,9 +37,18 @@ jobs:
         env:
           CI: true
 
+      - name: Set email
+        run: git config --global user.email "ccnethercott@gmail.com"
+
+      - name: Set name
+        run: git config --global user.name "Christopher Nethercott"
+
       - name: Bump minor version number
         run: npm version patch
 
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Push new version to master
+        run: git push
