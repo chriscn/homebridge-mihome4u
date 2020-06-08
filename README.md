@@ -6,13 +6,18 @@ A fast up to date homebridge plugin to interface properly with [MiHome](https://
   "platform": "MiHome",
   "username": "youremail@address.co.uk",
   "password": "yourpassword or APIKey",
-  "baseURL": ""
+  "baseURL": "",
+  "regex": {
+    "enabled": true,
+    "match_string": "/(?:\d{3}-\d{2} )?([\w - '’]+)/"
+  }
 }
 ```
 - `platform`: this should be left default to MiHome
 - `username`: your email address
 - `password`: either supply your password or API_Key
 - `baseURL`: incase the API gets updated
+- `regex`: enabled/disabled and then the string to change the display name
 
 ###### Scripts
 Below are scripts just so that I don't forget them.
