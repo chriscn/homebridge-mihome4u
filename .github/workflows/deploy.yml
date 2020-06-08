@@ -44,9 +44,6 @@ jobs:
       - name: Set name
         run: git config --global user.name "[ACTIONS] MiHome4U"
 
-      - name: Commit all changes
-        run: git commit -am "[ACTIONS] Commit all changes before publish"
-
       - name: Bump minor version number
         run: npm version patch
 
