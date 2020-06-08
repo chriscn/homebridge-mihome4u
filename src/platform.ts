@@ -117,14 +117,17 @@ export class MiHomePlatform implements DynamicPlatformPlugin {
           const uuid = this.api.hap.uuid.generate(device.id.toString());
           let friendlyName = '';
 
-          if (this.config.regex.enabled) {
-            if (this.config.regex.match_string == undefined || this.config.regex.match_string == null || this.config.regex.match_string == '') {
-              friendlyName = this.toTitleCase(device.label);
-            } else {
-              friendlyName = this.toTitleCase(device.label.match(this.config.regex.match_string)[1]);
-            }
-          } else {
+          if (this.config.regex == undefined
+            || this.config.regex == null 
+            || this.config.regex.enabled == undefined
+            || this.config.regex.enabled == null
+            || !this.config.regex.enabled
+            || this.config.regex.match_string == undefined
+            || this.config.regex.match_string == null 
+            || this.config.regex.match_string == '') {
             friendlyName = this.toTitleCase(device.label);
+          } else {
+            friendlyName = this.toTitleCase(device.label.match(this.config.regex.match_string)[1]);
           }
           // cleans up the name to be more homekit elagant
 
