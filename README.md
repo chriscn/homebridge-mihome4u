@@ -20,3 +20,7 @@ Below are scripts just so that I don't forget them.
 - `npm publish` - Publish to NPM
 - `npm link` - Allows homebridge to find it
 - `npm run watch` - Automatic development and restarting :-)
+
+## Branches
+- `master`: This is an automatic deploying branch, anything on here gets uploaded to npm and then out to Homebridge.
+- `develop`: This is where all **PR** should be made against. Any others will be closed.
