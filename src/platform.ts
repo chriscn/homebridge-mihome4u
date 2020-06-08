@@ -1,4 +1,4 @@
-  import type {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig} from 'homebridge';
+import type {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig} from 'homebridge';
 import {APIEvent} from 'homebridge';
 
 import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
