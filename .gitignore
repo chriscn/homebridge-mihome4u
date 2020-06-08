@@ -120,6 +120,3 @@ dist
 .yarn/build-state.yml
 .pnp.*
 .idea/codeStyles/Project.xml
-
-# package-lock
-package-lock.json
