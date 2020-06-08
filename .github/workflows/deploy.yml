@@ -51,7 +51,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - run: Update local repo
+      - name: Update local repo
         run: |
           git fetch
           git pull --all
