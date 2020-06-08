@@ -20,8 +20,14 @@ export class MiHomePlug {
 
     // get the LightBulb service if it exists, otherwise create a new LightBulb service
     // you can create multiple services for each accessory
-    this.service = this.accessory.getService(this.platform.Service.Outlet) ?? this.accessory.addService(this.platform.Service.Outlet, this.accessory.displayName);
-
+    switch (this.accessory.context.device.device_type.toLowerCase()) {
+      case "light":
+        this.service = this.accessory.getService(this.platform.Service.Lightbulb) ?? this.accessory.addService(this.platform.Service.Lightbulb, this.accessory.displayName);
+        break;
+      default:
+        this.service = this.accessory.getService(this.platform.Service.Outlet) ?? this.accessory.addService(this.platform.Service.Outlet, this.accessory.displayName);
+    }
+		
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
     // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
     // this.accessory.getService(this.platform.Service.AccessoryInformation.name) ?? this.accessory.addService(this.platform.Service.Switch, 'TEST', 'USER_DEFINED_SUBTYPE');
