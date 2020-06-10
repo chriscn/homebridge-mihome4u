@@ -1,27 +1,38 @@
 {
   "pluginAlias": "MiHome",
   "pluginType": "platform",
-  "headerDisplay": "Homebridge plugin to manage MiHome4U devices by Energenie",
   "singular": true,
+  "headerDisplay": "Switches are each exposed as individual accessories, all you need to do is supply your username and password.",
+  "footerDisplay": "You can manually fetch your APIKey instead of using your password, however all interactions with the API are done with the API key that we fetch automatically.",
   "schema": {
-    "type": "object",
-    "properties": {
-      "name": {
-        "title": "Name",
+      "type": "object",
+      "properties": {
+        "username": {
+          "title": "Email Address",
+          "type": "string"
+        },
+        "password": {
+          "title": "Password",
+          "type": "string"
+        },
+        "baseURL": {
+          "title": "Base URL",
           "type": "string",
-        "required": true,
-        "default": "MiHome"
-      },
-      "username": {
-        "title": "Username",
-        "type": "string",
-        "required": true
-      },
-      "password": {
-        "title": "Password",
-        "type": "string",
-        "required": true
+          "default": "https://mihome4u.co.uk",
+          "description": "If the base url of the API ever gets updated, you can manually update it here before I get a chance to."
+        },
+        "regex": {
+          "enabled": {
+            "title": "Enable custom renaming of device names",
+            "type": "boolean",
+            "default": "false"
+          },
+          "match_string": {
+            "title": "The regex string",
+            "type": "string",
+            "default": "/(?:\\d{3}-\\d{2} )?([\\w - '’]+)/"
+          }
+        }
       }
-    }
   }
 }
