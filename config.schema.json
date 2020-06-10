@@ -22,15 +22,18 @@
           "description": "If the base url of the API ever gets updated, you can manually update it here before I get a chance to."
         },
         "regex": {
-          "enabled": {
-            "title": "Enable custom renaming of device names",
-            "type": "boolean",
-            "default": "false"
-          },
-          "match_string": {
-            "title": "The regex string",
-            "type": "string",
-            "default": "/(?:\\d{3}-\\d{2} )?([\\w - '’]+)/"
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "title": "Enable custom renaming of device names",
+              "type": "boolean",
+              "default": "false"
+            },
+            "match_string": {
+              "title": "The regex string",
+              "type": "string",
+              "default": "/(?:\\d{3}-\\d{2} )?([\\w - '’]+)/"
+            }
           }
         }
       }
